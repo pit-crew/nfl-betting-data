@@ -1,7 +1,7 @@
 {
   "season": 2026,
   "week": 3,
-  "generatedAt": "2026-09-27T17:07:52.857Z",
+  "generatedAt": "2026-09-27T20:16:53.837Z",
   "status": "COMPLETE",
   "gameCount": 16,
   "dossiers": [
@@ -408,20 +408,20 @@
       "informationQuality": "SOURCE-LIMITED-EXPERT",
       "evidenceCount": 6,
       "market": {
-        "spread": "Baltimore Ravens -3.5",
+        "spread": "Baltimore Ravens -3",
         "total": 53.5,
         "moneyline": null,
-        "observedAt": "2026-09-27T17:07:52.503Z"
+        "observedAt": "2026-09-27T20:16:53.535Z"
       },
       "model": {
-        "spread": "Baltimore Ravens -2.9",
-        "homeMargin": -2.862,
+        "spread": "Baltimore Ravens -2.5",
+        "homeMargin": -2.462,
         "structural": "Baltimore Ravens -0.3",
-        "structuralEdge": 3.192,
+        "structuralEdge": 2.692,
         "total": 53.5
       },
       "mechanisms": [
-        "Frozen v1.1 structural fair: Baltimore Ravens -0.3; production fair: Baltimore Ravens -2.9; current market: Baltimore Ravens -3.5.",
+        "Frozen v1.1 structural fair: Baltimore Ravens -0.3; production fair: Baltimore Ravens -2.5; current market: Baltimore Ravens -3.",
         "Prior-week live state incorporated at 10%: Baltimore Ravens margin -7, Dallas Cowboys margin 17.",
         "Preseason priors remain 90%: Baltimore Ravens 2.16, Dallas Cowboys -1.96.",
         "0 governed current expert record(s) join this canonical game ID; expert analysis remains qualitative/no automatic points."
@@ -444,7 +444,7 @@
         "spread": "New Orleans Saints -3.5",
         "total": 43.5,
         "moneyline": null,
-        "observedAt": "2026-09-27T17:07:52.503Z"
+        "observedAt": "2026-09-27T20:16:53.535Z"
       },
       "model": {
         "spread": "New Orleans Saints -3.3",
@@ -477,7 +477,7 @@
         "spread": "Los Angeles Rams -1.5",
         "total": 44.5,
         "moneyline": null,
-        "observedAt": "2026-09-27T17:07:52.503Z"
+        "observedAt": "2026-09-27T20:16:53.535Z"
       },
       "model": {
         "spread": "Los Angeles Rams -2.2",
@@ -510,7 +510,7 @@
         "spread": "Philadelphia Eagles -4.5",
         "total": 41.5,
         "moneyline": null,
-        "observedAt": "2026-09-27T17:07:52.503Z"
+        "observedAt": "2026-09-27T20:16:53.535Z"
       },
       "model": {
         "spread": "Philadelphia Eagles -3.8",
