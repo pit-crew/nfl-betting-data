@@ -1,0 +1,25 @@
+name: Update NFL history CSV
+on:
+  schedule:
+    - cron: '0 9 * * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: nfl-history
+  cancel-in-progress: false
+jobs:
+  history:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Append new final games
+        run: python scripts/update_nfl_history.py
+      - name: Commit nfl-history.csv
+        run: |
+          git config user.name 'nfl-runtime-bot'; git config user.email 'nfl-runtime-bot@users.noreply.github.com'
+          if ! git diff --quiet -- nfl-history.csv; then git add nfl-history.csv; git commit -m 'chore: update nfl-history.csv [skip ci]'; git pull --rebase origin main; git push origin HEAD:main; fi
