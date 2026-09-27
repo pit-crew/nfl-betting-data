@@ -42,10 +42,14 @@ def per_team(df):
     return t, cols
 
 
-def run(data, cols, last_season, train_even):
+def split(data, last_season, train_even):
     d = data[(data["season"] <= last_season) & ~((data["season"] == last_season) & (data["week"] == "Superbowl"))]
     is_train = (d["season"] % 2 == 0) == train_even
-    tr, va = d[is_train], d[~is_train]
+    return d[is_train], d[~is_train]
+
+
+def run(data, cols, last_season, train_even):
+    tr, va = split(data, last_season, train_even)
     b = fit(tr[cols].to_numpy(float), tr["y"].to_numpy(float))
     p = predict(b, va[cols].to_numpy(float))
     y = va["y"].to_numpy()
