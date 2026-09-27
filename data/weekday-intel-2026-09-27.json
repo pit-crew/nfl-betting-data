@@ -1,7 +1,7 @@
 {
   "season": 2026,
   "week": 3,
-  "generatedAt": "2026-09-27T12:16:51.955Z",
+  "generatedAt": "2026-09-27T17:07:52.857Z",
   "mode": "Wednesday full reprice / universal research",
   "scheduleCoverage": {
     "canonicalGameCount": 16,
@@ -204,12 +204,12 @@
     {
       "gameId": "2026-W3-LAR-DEN",
       "matchup": "Los Angeles Rams at Denver Broncos",
-      "stage": "potential-research",
-      "priority": "Medium",
-      "currentSpread": "Los Angeles Rams -2.5",
-      "productionSpread": "Los Angeles Rams -3",
+      "stage": "high-priority-audit",
+      "priority": "High",
+      "currentSpread": "Los Angeles Rams -1.5",
+      "productionSpread": "Los Angeles Rams -2.2",
       "structuralSpread": "Los Angeles Rams -5.1",
-      "structuralEdge": 2.59,
+      "structuralEdge": 3.59,
       "lean": "LAR",
       "deepDiveStatus": "COMPLETE",
       "upsetResearch": "SCREENED-NOT-LARGE-SPREAD-DOG"
@@ -217,12 +217,12 @@
     {
       "gameId": "2026-W3-PHI-CHI",
       "matchup": "Philadelphia Eagles at Chicago Bears",
-      "stage": "research",
-      "priority": "Medium",
-      "currentSpread": "Philadelphia Eagles -3.5",
-      "productionSpread": "Philadelphia Eagles -3",
+      "stage": "high-priority-audit",
+      "priority": "High",
+      "currentSpread": "Philadelphia Eagles -4.5",
+      "productionSpread": "Philadelphia Eagles -3.8",
       "structuralSpread": "Philadelphia Eagles -1.2",
-      "structuralEdge": 2.258,
+      "structuralEdge": 3.258,
       "lean": "CHI",
       "deepDiveStatus": "COMPLETE",
       "upsetResearch": "SCREENED-NOT-LARGE-SPREAD-DOG"
@@ -230,7 +230,7 @@
   ],
   "modelReview": {
     "status": "COMPLETE",
-    "reviewedAt": "2026-09-27T12:16:51.955Z",
+    "reviewedAt": "2026-09-27T17:07:52.857Z",
     "methodologyVersion": "1.1-validated-structural-market-aware+expert-intelligence-v1",
     "phase": {
       "preseasonWeight": 0.9,
