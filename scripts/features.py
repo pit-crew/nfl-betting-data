@@ -1,10 +1,13 @@
 import pandas as pd
 
-PATH = "nfl-history.csv"
+PATH = "spreadspoke_scores.csv"
+DROP_TIES = False
 
 
 def load():
     df = pd.read_csv(PATH)
+    if DROP_TIES:
+        df = df[df["score_home"] != df["score_away"]].copy()
     df["schedule_date"] = pd.to_datetime(df["schedule_date"], format="%m/%d/%Y")
     return df.sort_values("schedule_date", kind="stable").reset_index(drop=True)
 
