@@ -1,3 +1,4 @@
+import argparse
 import math
 
 import pandas as pd
@@ -46,6 +47,13 @@ def run(games):
 
 
 if __name__ == "__main__":
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--date", default=pd.Timestamp.today().strftime("%Y-%m-%d"),
+                    help="yyyy-mm-dd; shows the two weeks starting the Thursday on or after this date")
+    start = pd.Timestamp(ap.parse_args().date)
+    start += pd.Timedelta(days=(3 - start.weekday()) % 7)
+    end = start + pd.Timedelta(days=13)
+
     ids = team_ids()
     h = pd.read_csv(HISTORY)
     games = pd.DataFrame({
@@ -66,7 +74,15 @@ if __name__ == "__main__":
     s["home"], s["away"] = s["home_team"].map(ids), s["away_team"].map(ids)
     played = set(zip(games["date"], games["home"]))
     s = s[[(d, t) not in played for d, t in zip(s["date"], s["home"])]]
+    s = s[(s["date"] >= start) & (s["date"] <= end)]
     diff = s["home"].map(ratings) - s["away"].map(ratings) + HFA
-    s["p_home"] = expected(diff).round(3)
-    s["spread_home"] = (-diff / 25).round(1)
-    print(s[["date", "home_team", "away_team", "p_home", "spread_home"]].to_string(index=False))
+    home_fav = diff >= 0
+    s["favourite"] = s["home_team"].where(home_fav, s["away_team"])
+    s["prob"] = expected(diff.abs())
+    s["spread"] = diff.abs() / 25
+
+    print()
+    print("| Date | Home | Away | Favourite | Prob | Spread |")
+    print("|---|---|---|---|---|---|")
+    for r in s.itertuples():
+        print(f"| {r.date:%b} {r.date.day} | {r.home_team} | {r.away_team} | {r.favourite} | {r.prob:.1%} | {r.spread:.1f} |")
