@@ -54,12 +54,13 @@ def run(data, cols, last_season, train_even):
     p = predict(b, va[cols].to_numpy(float))
     y = va["y"].to_numpy()
     rate = y.mean()
+    scored = y != 0.5  # ties with TIE_VALUE 0.5 are not scored
     ame = (p * (1 - p)).mean() * b[1:]
     return {
         "train rows": len(tr), "val rows": len(va),
         "val win rate": rate,
-        "baseline acc": max(rate, 1 - rate),
-        "logreg acc": ((p > 0.5) == y).mean(),
+        "baseline acc": (y[scored] == (rate > 0.5)).mean(),
+        "logreg acc": ((p > 0.5) == y)[scored].mean(),
     }, pd.DataFrame({"coef": b[1:], "avg effect on P(win)": ame}, index=cols)
 
 

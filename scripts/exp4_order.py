@@ -45,11 +45,12 @@ if __name__ == "__main__":
         Xva = torch.from_numpy(((va[cols] - mean) / std).to_numpy(np.float32))
         ytr, yva = tr["y"].to_numpy(np.float32), va["y"].to_numpy()
         rate = yva.mean()
-        print(f"== {name}: baseline {max(rate, 1 - rate):.4f}")
+        scored = yva != 0.5  # ties with TIE_VALUE 0.5 are not scored
+        print(f"== {name}: baseline {(yva[scored] == (rate > 0.5)).mean():.4f}")
         for order, seasons in [("shuffled", None), ("season by season", tr["season"].to_numpy())]:
             accs = []
             for seed in SEEDS:
                 m = fit(Xtr, ytr, seasons, seed)
                 with torch.no_grad():
-                    accs.append(((m(Xva).squeeze(-1) > 0).numpy() == yva).mean())
+                    accs.append(((m(Xva).squeeze(-1) > 0).numpy() == yva)[scored].mean())
             print(f"{order}: acc mean {np.mean(accs):.4f}, min {min(accs):.4f}, max {max(accs):.4f}")

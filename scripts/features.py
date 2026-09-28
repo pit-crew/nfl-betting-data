@@ -1,7 +1,10 @@
 import pandas as pd
 
 PATH = "spreadspoke_scores.csv"
+TEAMS = "nfl_teams.csv"
 DROP_TIES = False
+TIE_VALUE = 0.5  # label and win credit for a tie; 0 = loss
+RESET_BY_SEASON = True  # False: features accumulate over a team's whole history
 
 
 def load():
@@ -25,9 +28,11 @@ def team_games(df):
     })
     t = pd.concat([home, away]).sort_values(["date", "game_idx"], kind="stable").reset_index(drop=True)
     t["diff"] = t["points_for"] - t["points_against"]
-    t["win"] = (t["diff"] > 0).astype(int)
+    t["win"] = (t["diff"] > 0) + TIE_VALUE * (t["diff"] == 0)
 
-    g = t.groupby(["team", "season"])
+    ids = pd.read_csv(TEAMS).set_index("team_name")["team_id"]
+    t["team_id"] = t["team"].map(ids)
+    g = t.groupby(["team_id", "season"] if RESET_BY_SEASON else ["team_id"])
     t["games_played"] = g.cumcount()
     t["wins"] = g["win"].cumsum() - t["win"]
     diff_sum = g["diff"].cumsum() - t["diff"]
@@ -41,7 +46,7 @@ def game_features(df):
     home = t[t["is_home"]][cols].set_index("game_idx").add_prefix("home_")
     away = t[~t["is_home"]][cols].set_index("game_idx").add_prefix("away_")
     out = df.join(home).join(away)
-    out["home_win"] = (out["score_home"] > out["score_away"]).astype(int)
+    out["home_win"] = (out["score_home"] > out["score_away"]) + TIE_VALUE * (out["score_home"] == out["score_away"])
     out["score_diff"] = out["score_home"] - out["score_away"]
     return out
 
