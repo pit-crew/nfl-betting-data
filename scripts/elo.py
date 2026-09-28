@@ -1,5 +1,6 @@
 import argparse
 import math
+import sys
 
 import pandas as pd
 
@@ -50,7 +51,9 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--date", default=pd.Timestamp.today().strftime("%Y-%m-%d"),
                     help="yyyy-mm-dd; shows the two weeks starting the Thursday on or after this date")
-    start = pd.Timestamp(ap.parse_args().date)
+    ap.add_argument("--csv", action="store_true", help="output CSV instead of a markdown table")
+    args = ap.parse_args()
+    start = pd.Timestamp(args.date)
     start += pd.Timedelta(days=(3 - start.weekday()) % 7)
     end = start + pd.Timedelta(days=13)
 
@@ -67,7 +70,8 @@ if __name__ == "__main__":
     ev = res[(res["season"] >= EVAL_FROM) & (res["result"] != 0.5)]
     print(f"seasons {EVAL_FROM}+: games {len(ev)}, "
           f"accuracy {((ev['p_home'] > 0.5) == (ev['result'] == 1)).mean():.4f}, "
-          f"Brier {((ev['p_home'] - ev['result']) ** 2).mean():.4f}")
+          f"Brier {((ev['p_home'] - ev['result']) ** 2).mean():.4f}",
+          file=sys.stderr if args.csv else sys.stdout)
 
     s = pd.read_csv(SCHEDULE)
     s["date"] = pd.to_datetime(s["date"])
@@ -80,6 +84,13 @@ if __name__ == "__main__":
     s["favourite"] = s["home_team"].where(home_fav, s["away_team"])
     s["prob"] = expected(diff.abs())
     s["spread"] = diff.abs() / 25
+    s = s.sort_values("prob", ascending=False, kind="stable")
+
+    if args.csv:
+        out = s[["date", "home_team", "away_team", "favourite", "prob", "spread"]].round({"spread": 1})
+        out["prob"] = out["prob"].fillna(0.0).map("{:.4f}".format)
+        out.to_csv(sys.stdout, index=False, date_format="%Y-%m-%d")
+        sys.exit()
 
     print()
     print("| Date | Home | Away | Favourite | Prob | Spread |")
