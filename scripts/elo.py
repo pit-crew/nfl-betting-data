@@ -47,6 +47,18 @@ def run(games):
     return ratings, pd.DataFrame(rows)
 
 
+def records(games):
+    """Return {team_id: 'W-L' or 'W-L-T'} for the latest season in games."""
+    g = games[games["season"] == games["season"].max()].dropna(subset=["score_home", "score_away"])
+    tally = {}
+    for r in g.itertuples():
+        margin = r.score_home - r.score_away
+        for team, m in ((r.home, margin), (r.away, -margin)):
+            t = tally.setdefault(team, [0, 0, 0])
+            t[0 if m > 0 else 1 if m < 0 else 2] += 1
+    return {team: f"{w}-{l}" + (f"-{t}" if t else "") for team, (w, l, t) in tally.items()}
+
+
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--date", default=pd.Timestamp.today().strftime("%Y-%m-%d"),
@@ -84,16 +96,20 @@ if __name__ == "__main__":
     s["favourite"] = s["home_team"].where(home_fav, s["away_team"])
     s["prob"] = expected(diff.abs())
     s["spread"] = diff.abs() / 25
+    rec = records(games)
+    s["home_record"] = s["home"].map(rec).fillna("0-0")
+    s["away_record"] = s["away"].map(rec).fillna("0-0")
+    s["record"] = s["home_record"].where(home_fav, s["away_record"])
     s = s.sort_values("prob", ascending=False, kind="stable")
 
     if args.csv:
-        out = s[["date", "home_team", "away_team", "favourite", "prob", "spread"]].round({"spread": 1})
+        out = s[["record", "home_record", "away_record", "date", "home_team", "away_team", "favourite", "prob", "spread"]].round({"spread": 1})
         out["prob"] = out["prob"].fillna(0.0).map("{:.4f}".format)
         out.to_csv(sys.stdout, index=False, date_format="%Y-%m-%d")
         sys.exit()
 
     print()
-    print("| Date | Home | Away | Favourite | Prob | Spread |")
-    print("|---|---|---|---|---|---|")
+    print("| Record | Date | Home | Away | Favourite | Prob | Spread |")
+    print("|---|---|---|---|---|---|---|")
     for r in s.itertuples():
-        print(f"| {r.date:%b} {r.date.day} | {r.home_team} | {r.away_team} | {r.favourite} | {r.prob:.1%} | {r.spread:.1f} |")
+        print(f"| {r.record} | {r.date:%b} {r.date.day} | {r.home_team} | {r.away_team} | {r.favourite} | {r.prob:.1%} | {r.spread:.1f} |")
